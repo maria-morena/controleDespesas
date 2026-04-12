@@ -15,7 +15,6 @@ $total = $resultTotal->fetch(PDO::FETCH_OBJ);
 $sql = "SELECT * FROM despesas";
 $consulta = $conexao->query($sql);
 
-
 $id = isset($_GET['id']) ? $_GET['id'] : null;
 
 if ($id) {
@@ -48,18 +47,34 @@ body {
     max-width: 900px;
 }
 
-<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-    
-    <h2><?php echo isset($id) ? "Editar Gasto" : "Adicionar Gasto"; ?></h2>
+.topo {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
 
-    <a href="logout.php" class="btn-sair">Sair</a>
+.usuario {
+    font-size: 14px;
+    color: #64748b;
+}
 
-</div>
+.btn-sair {
+    background-color: #64748b;
+    color: white;
+    padding: 6px 12px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-size: 13px;
+}
+
+.btn-sair:hover {
+    background-color: #475569;
+}
 
 h2 {
     margin-bottom: 10px;
 }
-
 
 form {
     background: white;
@@ -96,7 +111,6 @@ button:hover {
     background-color: #1d4ed8;
 }
 
-
 .total-box {
     background: white;
     padding: 15px;
@@ -105,7 +119,6 @@ button:hover {
     border: 1px solid #e2e8f0;
     font-size: 18px;
 }
-
 
 table {
     width: 100%;
@@ -137,7 +150,6 @@ tr:hover {
     align-items: center;
 }
 
-
 .btn-editar {
     color: #2563eb;
     text-decoration: none;
@@ -149,11 +161,9 @@ tr:hover {
     text-decoration: underline;
 }
 
-
 .acoes form {
     margin: 0;
 }
-
 
 .btn-excluir {
     background-color: #ef4444;
@@ -168,19 +178,6 @@ tr:hover {
 .btn-excluir:hover {
     background-color: #dc2626;
 }
-
-.btn-sair {
-    background-color: #64748b;
-    color: white;
-    padding: 6px 12px;
-    border-radius: 6px;
-    text-decoration: none;
-    font-size: 13px;
-}
-
-.btn-sair:hover {
-    background-color: #475569;
-}
 </style>
 </head>
 
@@ -188,7 +185,15 @@ tr:hover {
 
 <div class="container">
 
-<h2><?php echo isset($id) ? "Editar Gasto" : "Adicionar Gasto"; ?></h2>
+
+<div class="topo">
+    <div>
+        <h2><?php echo isset($id) ? "Editar Gasto" : "Adicionar Gasto"; ?></h2>
+        <div class="usuario">Logado como: <?php echo $_SESSION['usuario']; ?></div>
+    </div>
+
+    <a href="logout.php" class="btn-sair">Sair</a>
+</div>
 
 <form method="POST" action="<?php echo isset($id) ? '/controleDespesas/src/editar.php' : '/controleDespesas/src/inserir.php'; ?>">
     
