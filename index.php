@@ -7,6 +7,7 @@ if (!isset($_SESSION['usuario'])) {
 }
 
 include "src/conexao.php";
+include "src/cotacao.php";
 
 $sqlTotal = "SELECT SUM(valor) as total FROM despesas";
 $resultTotal = $conexao->query($sqlTotal);
@@ -178,6 +179,15 @@ tr:hover {
 .btn-excluir:hover {
     background-color: #dc2626;
 }
+
+.cotacao-box {
+    background: white;
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #e2e8f0;
+    font-size: 18px;
+}
 </style>
 </head>
 
@@ -219,6 +229,11 @@ tr:hover {
 <div class="total-box">
     💰 Total de gastos: 
     R$ <?php echo number_format($total->total ?? 0, 2, ',', '.'); ?>
+</div>
+
+<div class="cotacao-box">
+    💵 Dólar Hoje:
+    R$ <?php echo number_format($dolar, 2, ',', '.'); ?>
 </div>
 
 <table>
