@@ -1,13 +1,15 @@
 <?php
-$host = "localhost";
-$user = "postgres";
-$porta = "5432"; 
-$password = "senha";
-$db = "controle_gastos";
+
+$host = getenv("PGHOST");
+$db = getenv("PGDATABASE");
+$user = getenv("PGUSER");
+$senha = getenv("PGPASSWORD");
+$port = getenv("PGPORT");
 
 $conexao = new PDO(
-    "pgsql:host=$host;port=$porta;dbname=$db",
+    "pgsql:host=$host;port=$port;dbname=$db",
     $user,
-    $password
+    $senha
 );
+
 ?>
