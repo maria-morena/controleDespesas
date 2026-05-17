@@ -28,6 +28,7 @@ if (
     $stmt->execute();
 }
 
-header("Location: ../index.php")
+// O erro estava na linha abaixo (faltava o ponto e vírgula)
+header("Location: ../index.php"); 
 exit;
 ?>
