@@ -5,12 +5,11 @@
     if (!isset($_POST['descricao'], $_POST['valor']) || empty($_POST['descricao']) || empty($_POST['valor'])) {
     header('Location: ../index.php');
     exit;
-} //verifica se dados foram enviados 
+} 
 
     $descricao = $_POST['descricao'];
     $valor = $_POST['valor'];
-    $data = date('Y-m-d'); //data automática
-   
+    $data = date('Y-m-d'); 
 
 
     $sql = " INSERT INTO despesas (descricao, valor,data) 

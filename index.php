@@ -6,6 +6,7 @@ if (!isset($_SESSION['usuario'])) {
     exit;
 }
 
+
 include "src/conexao.php";
 include "src/cotacao.php";
 
@@ -206,7 +207,6 @@ tr:hover {
 </div>
 
 <form method="POST" action="<?php echo isset($id) ? 'src/editar.php' : 'src/inserir.php'; ?>">
-    
     <?php if ($id): ?>
         <input type="hidden" name="id" value="<?php echo $despesas->id; ?>">
     <?php endif; ?>
