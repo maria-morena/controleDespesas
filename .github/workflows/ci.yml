@@ -25,3 +25,6 @@ jobs:
 
       - name:  Rodar Testes
         run: php tests/testes.php
+
+      - name: Executar teste de integração
+      run: php tests/teste_integracao.php

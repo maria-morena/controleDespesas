@@ -4,6 +4,12 @@ Aplicação web desenvolvida em PHP para gerenciamento de gastos pessoais.
 Permite que usuários façam login e gerenciem suas despesas de forma simples e organizada.
 
 ---
+## 🌐 Deploy Online
+
+Você pode acessar o projeto rodando ao vivo aqui:
+ [https://controle-despesas-bsnc.onrender.com](https://controle-despesas-bsnc.onrender.com)
+
+---
 
 ## 📌 Visão Geral
 

@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: controle-despesas
+    runtime: docker # Mudamos de php para docker
+    plan: free
+    envVars:
+      - key: DB_HOST
+        sync: false
+      - key: DB_NAME
+        value: controle_gastos
+      - key: DB_PORT
+        value: "5432"
+      - key: DB_USER
+        sync: false
+      - key: DB_PASS
+        sync: false
