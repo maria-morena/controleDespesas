@@ -205,7 +205,7 @@ tr:hover {
     <a href="logout.php" class="btn-sair">Sair</a>
 </div>
 
-<form method="POST" action="<?php echo isset($id) ? '/controleDespesas/src/editar.php' : '/controleDespesas/src/inserir.php'; ?>">
+<form method="POST" action="<?php echo isset($id) ? 'src/editar.php' : 'src/inserir.php'; ?>">
     
     <?php if ($id): ?>
         <input type="hidden" name="id" value="<?php echo $despesas->id; ?>">
@@ -255,7 +255,7 @@ tr:hover {
             Editar
         </a>
 
-        <form action="/controleDespesas/src/excluir.php" method="POST">
+        <form action="src/excluir.php" method="POST">
             <input type="hidden" name="id" value="<?php echo $linha->id; ?>">
             <button class="btn-excluir" type="submit"
                 onclick="return confirm('Tem certeza que deseja excluir?')">
