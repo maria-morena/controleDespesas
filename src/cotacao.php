@@ -1,11 +1,15 @@
 <?php
-
 $url = "https://economia.awesomeapi.com.br/json/last/USD-BRL";
 
-$resposta = file_get_contents($url);
 
-$dados = json_decode($resposta, true);
+$resposta = @file_get_contents($url);
 
-$dolar = $dados['USDBRL']['bid'];
+if ($resposta !== false) {
+    $dados = json_decode($resposta, true);
+    $cotacao = $dados['USDBRL']['bid'] ?? '0.00';
+} else {
+    $cotacao = "Indisponível";
+}
 
+echo "Dólar: R$ " . $cotacao;
 ?>
