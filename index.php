@@ -1,4 +1,5 @@
 <?php
+// Versão final estável
 error_reporting(0);
 session_start();
 
