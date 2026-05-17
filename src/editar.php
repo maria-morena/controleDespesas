@@ -28,6 +28,6 @@ if (
     $stmt->execute();
 }
 
-header('Location: /controleDespesas/index.php');
+header('Location: ../index.php');
 exit;
 ?>
