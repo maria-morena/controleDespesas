@@ -1,10 +1,10 @@
 <?php
 
-$host = getenv("MYSQLHOST");
-$db = getenv("MYSQLDATABASE");
-$user = getenv("MYSQLUSER");
-$senha = getenv("MYSQLPASSWORD");
-$port = getenv("MYSQLPORT");
+$host = $_ENV['MYSQLHOST'];
+$db = $_ENV['MYSQLDATABASE'];
+$user = $_ENV['MYSQLUSER'];
+$senha = $_ENV['MYSQLPASSWORD'];
+$port = $_ENV['MYSQLPORT'];
 
 try {
 
@@ -16,7 +16,7 @@ try {
 
     $conexao->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-
+    // tabela usuarios
     $conexao->exec("
         CREATE TABLE IF NOT EXISTS usuarios (
             id INT AUTO_INCREMENT PRIMARY KEY,
@@ -25,7 +25,7 @@ try {
         )
     ");
 
-
+    // tabela despesas
     $conexao->exec("
         CREATE TABLE IF NOT EXISTS despesas (
             id INT AUTO_INCREMENT PRIMARY KEY,
@@ -35,10 +35,8 @@ try {
         )
     ");
 
-
-    $verifica = $conexao->query("
-        SELECT COUNT(*) FROM usuarios
-    ");
+    // usuário admin
+    $verifica = $conexao->query("SELECT COUNT(*) FROM usuarios");
 
     if ($verifica->fetchColumn() == 0) {
 
@@ -53,7 +51,7 @@ try {
 
 } catch(PDOException $e) {
 
-    echo "Erro: " . $e->getMessage();
+    die("Erro: " . $e->getMessage());
 }
 
 ?>
