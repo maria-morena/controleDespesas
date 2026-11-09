@@ -1,9 +1,11 @@
 <?php
-$host = getenv('DB_HOST') ?: "dpg-d84jkj8g4nts73f8lmb0-a"; 
+// Os dados de acesso vêm SEMPRE de variáveis de ambiente.
+// Nunca coloque senhas no código: o repositório é público.
+$host = getenv('DB_HOST');
 $port = getenv('DB_PORT') ?: "5432";
-$db   = getenv('DB_NAME') ?: "controle_gastos_khxu"; 
-$user = getenv('DB_USER') ?: "admin";
-$pass = getenv('DB_PASS') ?: "4eGccqYJaUSiGJh8pFJQHNYe3wcH2rSp"; 
+$db   = getenv('DB_NAME');
+$user = getenv('DB_USER');
+$pass = getenv('DB_PASS');
 
 try {
     $conexao = new PDO(

@@ -1,5 +1,6 @@
 <?php
 include "conexao.php";
+require_once "categorizar.php";
 
 if (
     isset($_POST['id']) &&
@@ -12,10 +13,14 @@ if (
     $valor = $_POST['valor'];
     $data = !empty($_POST['data']) ? $_POST['data'] : null;
 
+    // A descrição pode ter mudado, então a IA categoriza de novo
+    $categoria = categorizarDespesa($descricao, (float) $valor);
+
     $sql = "UPDATE despesas 
             SET descricao = :descricao, 
                 valor = :valor, 
-                data = :data 
+                data = :data,
+                categoria = :categoria
             WHERE id = :id";
 
     $stmt = $conexao->prepare($sql);
@@ -23,12 +28,12 @@ if (
     $stmt->bindParam(':descricao', $descricao);
     $stmt->bindParam(':valor', $valor);
     $stmt->bindParam(':data', $data);
+    $stmt->bindParam(':categoria', $categoria);
     $stmt->bindParam(':id', $id);
 
     $stmt->execute();
 }
 
-// O erro estava na linha abaixo (faltava o ponto e vírgula)
 header("Location: ../index.php"); 
 exit;
 ?>

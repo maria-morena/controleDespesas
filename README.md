@@ -20,6 +20,7 @@ Este sistema permite:
 - Excluir despesas
 - Visualizar todas as despesas cadastradas
 - Calcular automaticamente o total de gastos
+- **Categorizar cada despesa automaticamente com IA** (Google Gemini)
 - Acessar o sistema com autenticação (login)
 
 ---
@@ -35,10 +36,25 @@ A aplicação possui interface gráfica (GUI), acessada via navegador, contendo:
 
 ---
 
+## 🤖 Categorização com IA
+
+Ao cadastrar ou editar uma despesa, o sistema envia a descrição e o valor para a API do **Google Gemini**, que escolhe uma categoria entre: Alimentação, Transporte, Moradia, Saúde, Educação, Lazer, Compras, Contas e serviços e Outros.
+
+- **Saída estruturada:** a API é configurada para responder em JSON, com a categoria restrita a essa lista (`responseSchema` com `enum`).
+- **Validação no código:** mesmo assim, o PHP confere se a categoria recebida está na lista.
+- **Fallback:** se a API falhar, demorar mais de 8 segundos, não houver chave configurada ou a resposta for inesperada, a despesa é salva com a categoria **Outros**. O cadastro nunca deixa de funcionar por causa da IA.
+- **Temperatura 0:** a mesma descrição gera sempre a mesma categoria.
+
+Código: [`src/categorizar.php`](src/categorizar.php).
+
+---
+
 ## 🛠️ Tecnologias Utilizadas
 
 - PHP
 - PostgreSQL
+- Google Gemini API
+- Docker e Render (deploy)
 - HTML
 - CSS
 - GitHub Actions (CI)
@@ -101,28 +117,18 @@ CREATE TABLE despesas (
     id SERIAL PRIMARY KEY,
     descricao VARCHAR(255) NOT NULL,
     valor DECIMAL(10,2) NOT NULL,
-    data DATE
+    data DATE,
+    categoria VARCHAR(30) NOT NULL DEFAULT 'Outros'
 );
 ```
 ---
 
-### 3. Inserir usuário de teste
+### 3. Inserir um usuário (ambiente local)
 
 INSERT INTO usuarios (email, senha)
-VALUES ('admin@email.com', md5('123456'));
+VALUES ('seu-email@exemplo.com', md5('sua-senha'));
 
----
-
-## 🔐 Acesso ao Sistema
-
-Atualmente, o sistema não possui cadastro de usuários pela interface.
-
-Para acessar, utilize:
-
-- **Email:** admin@email.com  
-- **Senha:** 123456  
-
-⚠️ O acesso só é possível com usuários cadastrados no banco.
+O sistema não possui cadastro de usuários pela interface: o acesso só é possível com usuários cadastrados no banco.
 
 ---
 
@@ -140,16 +146,15 @@ C:\xampp\htdocs\
 
 ---
 
-### 3. Configurar conexão com o banco
+### 3. Configurar as variáveis de ambiente
 
-Arquivo: `src/conexao.php`
+As credenciais **não ficam no código**. Configure estas variáveis de ambiente (no Render, em *Environment*; localmente, no Apache ou no sistema):
 
-Exemplo:
-
-$host = "localhost";  
-$db = "controle_despesas";  
-$user = "postgres";  
-$senha = "sua_senha";
+| Variável | Para que serve |
+|---|---|
+| `DB_HOST`, `DB_PORT`, `DB_NAME`, `DB_USER`, `DB_PASS` | Conexão com o PostgreSQL |
+| `GEMINI_API_KEY` | Chave da API do Gemini (Google AI Studio). Sem ela, todas as despesas ficam como "Outros" |
+| `GEMINI_MODEL` | Opcional: modelo do Gemini a usar |
 
 ---
 
@@ -175,9 +180,19 @@ Cenários testados:
 - Descrição vazia (inválido)
 - Valor muito alto (caso extremo)
 
+Categorização com IA ([`tests/teste_categorizar.php`](tests/teste_categorizar.php)), usando **respostas simuladas** da IA, sem chamar a API real:
+
+- Categoria válida é aceita
+- Categoria fora da lista vira "Outros"
+- Falha da API, resposta que não é JSON ou erro na chamada viram "Outros"
+- Descrição vazia vira "Outros" sem chamar a IA
+- O prompt leva a descrição e a lista de categorias
+
 ### Executar testes
 
 C:\xampp\php\php.exe tests/testes.php
+
+C:\xampp\php\php.exe tests/teste_categorizar.php
 
 ---
 
@@ -195,6 +210,8 @@ Executa automaticamente:
 
 - Verificação de sintaxe (lint)
 - Testes automatizados
+- Testes da categorização com IA (respostas simuladas)
+- Teste de integração com a API de cotação
 
 Em:
 
@@ -221,7 +238,7 @@ C:\xampp\php\php.exe
 
 Verifique:
 
-- credenciais no `conexao.php`
+- as variáveis de ambiente do banco (`DB_HOST`, `DB_USER`, `DB_PASS`...)
 - se o PostgreSQL está ativo
 
 ---
@@ -231,6 +248,7 @@ Verifique:
 - Uso de MD5 (não recomendado em produção)
 - Sem cadastro de usuários via interface
 - Sem separação por usuário
+- A categoria é sugerida pela IA e pode errar em descrições ambíguas
 
 ---
 
@@ -240,6 +258,7 @@ Verifique:
 - Cadastro de usuários
 - Filtro por data
 - Dashboard com gráficos
+- Permitir corrigir a categoria manualmente
 
 ---
 

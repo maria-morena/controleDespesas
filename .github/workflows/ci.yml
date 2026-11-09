@@ -12,19 +12,22 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name:  Clonar repositório
+      - name: Clonar repositório
         uses: actions/checkout@v4
 
-      - name:  Instalar PHP
+      - name: Instalar PHP
         uses: shivammathur/setup-php@v2
         with:
           php-version: 8.1
 
-      - name:  Rodar Lint
-        run: find . -name "*.php" -exec php -l {} \;
+      - name: Rodar Lint
+        run: find . -name "*.php" -print0 | xargs -0 -n1 php -l
 
-      - name:  Rodar Testes
+      - name: Rodar Testes
         run: php tests/testes.php
 
+      - name: Testar categorização com IA (respostas simuladas)
+        run: php tests/teste_categorizar.php
+
       - name: Executar teste de integração
-      run: php tests/teste_integracao.php
+        run: php tests/teste_integracao.php

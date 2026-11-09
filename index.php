@@ -54,6 +54,7 @@ if ($id) {
         tr:hover { background-color: #f1f5f9; }
         .acoes { display: flex; gap: 12px; align-items: center; }
         .btn-editar { color: #2563eb; text-decoration: none; font-weight: 500; font-size: 14px; }
+        .categoria { background-color: #eff6ff; color: #1d4ed8; padding: 3px 10px; border-radius: 999px; font-size: 13px; white-space: nowrap; }
         .btn-excluir { background-color: #ef4444; color: white; border: none; padding: 6px 12px; font-size: 13px; border-radius: 6px; cursor: pointer; }
     </style>
 </head>
@@ -96,13 +97,15 @@ if ($id) {
     <table>
         <tr>
             <th>Descrição</th>
+            <th>Categoria</th>
             <th>Valor</th>
             <th>Data</th>
             <th>Ações</th>
         </tr>
         <?php while ($linha = $consulta->fetch(PDO::FETCH_OBJ)) { ?>
         <tr>
-            <td><?php echo $linha->descricao ?></td>
+            <td><?php echo htmlspecialchars($linha->descricao) ?></td>
+            <td><span class="categoria"><?php echo htmlspecialchars($linha->categoria ?? 'Outros') ?></span></td>
             <td>R$ <?php echo number_format($linha->valor, 2, ',', '.'); ?></td>
             <td><?php echo date('d/m/Y', strtotime($linha->data)); ?></td>
             <td class="acoes">
