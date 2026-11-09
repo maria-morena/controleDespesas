@@ -54,6 +54,11 @@ $prompt = montarPrompt('Mensalidade da faculdade', 950.00);
 verificar('prompt contém a descrição', str_contains($prompt, 'Mensalidade da faculdade'));
 verificar('prompt contém a lista de categorias', str_contains($prompt, 'Contas e serviços'));
 
+// 8. Leitura do código HTTP, usado para decidir se tenta de novo
+verificar('lê o código 429', codigoHttp(['HTTP/1.1 429 Too Many Requests']) === 429);
+verificar('lê o código 200', codigoHttp(['HTTP/2 200']) === 200);
+verificar('sem cabeçalho devolve 0', codigoHttp([]) === 0);
+
 echo $falhas === 0 ? "Todos os testes passaram.\n" : "$falhas teste(s) falharam.\n";
 
 // Código de saída diferente de 0 faz o GitHub Actions ficar vermelho

@@ -63,13 +63,53 @@ function chamarGemini(string $prompt): ?string
         ],
     ]);
 
-    $resposta = @file_get_contents($url, false, $contexto);
-    if ($resposta === false) {
-        return null;
+    // Até 2 tentativas: a segunda só acontece em falhas passageiras
+    // (excesso de pedidos ou instabilidade do servidor do Gemini).
+    for ($tentativa = 1; $tentativa <= 2; $tentativa++) {
+        $resposta = @file_get_contents($url, false, $contexto);
+
+        if ($resposta === false) {
+            registrarFalha("sem resposta (timeout ou rede), tentativa $tentativa");
+            return null; // não repete: já esperou 8 segundos
+        }
+
+        $status = codigoHttp($http_response_header ?? []);
+        $dados = json_decode($resposta, true);
+
+        if ($status === 200) {
+            $texto = $dados['candidates'][0]['content']['parts'][0]['text'] ?? null;
+            if ($texto === null) {
+                registrarFalha('resposta 200 sem texto');
+            }
+            return $texto;
+        }
+
+        $mensagem = $dados['error']['message'] ?? 'sem mensagem';
+        registrarFalha("HTTP $status, tentativa $tentativa: $mensagem");
+
+        $passageira = in_array($status, [429, 500, 503], true);
+        if (!$passageira || $tentativa === 2) {
+            return null;
+        }
+        sleep(2);
     }
 
-    $dados = json_decode($resposta, true);
-    return $dados['candidates'][0]['content']['parts'][0]['text'] ?? null;
+    return null;
+}
+
+// Lê o código HTTP (200, 429...) da primeira linha dos cabeçalhos da resposta.
+function codigoHttp(array $cabecalhos): int
+{
+    if (isset($cabecalhos[0]) && preg_match('/\s(\d{3})\s?/', $cabecalhos[0], $m)) {
+        return (int) $m[1];
+    }
+    return 0;
+}
+
+// Escreve o motivo nos Logs do Render. Nunca registra a chave nem a descrição da despesa.
+function registrarFalha(string $motivo): void
+{
+    error_log("[categorizar] Falha na IA: $motivo");
 }
 
 // $chamarIa permite trocar a chamada real por uma resposta simulada nos testes.
