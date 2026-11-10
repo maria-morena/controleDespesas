@@ -41,6 +41,8 @@ if ($id) {
         .usuario { font-size: 14px; color: #64748b; }
         .btn-sair { background-color: #64748b; color: white; padding: 6px 12px; border-radius: 6px; text-decoration: none; font-size: 13px; }
         .btn-sair:hover { background-color: #475569; }
+        .btn-resumo { background-color: #2563eb; color: white; padding: 6px 12px; border-radius: 6px; text-decoration: none; font-size: 13px; }
+        .btn-resumo:hover { background-color: #1d4ed8; }
         h2 { margin-bottom: 10px; }
         form { background: white; padding: 20px; border-radius: 10px; margin-bottom: 25px; border: 1px solid #e2e8f0; }
         label { font-size: 14px; color: #64748b; }
@@ -66,7 +68,10 @@ if ($id) {
             <h2><?php echo $id ? "Editar Gasto" : "Adicionar Gasto"; ?></h2>
             <div class="usuario">Logado como: <?php echo $_SESSION['usuario']; ?></div>
         </div>
-        <a href="logout.php" class="btn-sair">Sair</a>
+        <div class="acoes">
+            <a href="resumo.php" class="btn-resumo">📊 Resumo do mês</a>
+            <a href="logout.php" class="btn-sair">Sair</a>
+        </div>
     </div>
 
     <form method="POST" action="<?php echo $id ? 'src/editar.php' : 'src/inserir.php'; ?>">

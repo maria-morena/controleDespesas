@@ -29,5 +29,8 @@ jobs:
       - name: Testar categorização com IA (respostas simuladas)
         run: php tests/teste_categorizar.php
 
+      - name: Testar resumo do mês (respostas simuladas)
+        run: php tests/teste_resumo.php
+
       - name: Executar teste de integração
         run: php tests/teste_integracao.php

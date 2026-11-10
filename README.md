@@ -21,6 +21,7 @@ Este sistema permite:
 - Visualizar todas as despesas cadastradas
 - Calcular automaticamente o total de gastos
 - **Categorizar cada despesa automaticamente com IA** (Google Gemini)
+- **Ver o resumo do mês** por categoria, com comparação com o mês anterior e um texto explicativo gerado por IA
 - Acessar o sistema com autenticação (login)
 
 ---
@@ -46,6 +47,24 @@ Ao cadastrar ou editar uma despesa, o sistema envia a descrição e o valor para
 - **Temperatura 0:** a mesma descrição gera sempre a mesma categoria.
 
 Código: [`src/categorizar.php`](src/categorizar.php).
+
+---
+
+## 📊 Resumo do mês com IA
+
+<!-- Coloque aqui o GIF da demonstração: ![Resumo do mês](docs/resumo-mes.gif) -->
+
+Na página **Resumo do mês**, a pessoa escolhe o mês e vê o total, a quantidade de despesas, o total do mês anterior e quanto gastou em cada categoria. Ao clicar em **Gerar resumo com IA**, o Gemini escreve um texto curto explicando esses números.
+
+- **Os números são calculados pelo código, não pela IA.** O PHP soma as despesas; a IA só transforma os totais em texto. Assim, os valores da tabela estão sempre certos.
+- **A IA recebe só os totais por categoria**, nunca as descrições das despesas (menos dados pessoais enviados e menos tokens).
+- **Prompt com regras:** usar somente os números enviados, comparar com o mês anterior, terminar com uma sugestão gentil e responder em texto simples.
+- **A IA só é chamada quando a pessoa clica no botão**, para não gastar a cota da API a cada visita.
+- **Fallback:** se a API falhar, os números continuam na tela e aparece um aviso. Mês sem despesas não chama a IA.
+- **Saída tratada:** o texto é escapado com `htmlspecialchars` (proteção contra XSS), tem asteriscos de markdown removidos e tamanho máximo.
+- **Logs e nova tentativa:** falhas da IA são registradas nos logs (sem a chave nem dados das despesas), e erros passageiros (429, 500, 503) ganham uma segunda tentativa.
+
+Código: [`resumo.php`](resumo.php), [`src/resumo.php`](src/resumo.php) e [`src/gemini.php`](src/gemini.php) (chamada à API compartilhada pelas duas funcionalidades).
 
 ---
 
@@ -75,11 +94,18 @@ controleDespesas/
 │ ├── inserir.php
 │ ├── editar.php
 │ ├── excluir.php
+│ ├── gemini.php        # chamada à API do Gemini (logs e nova tentativa)
+│ ├── categorizar.php   # categorização com IA
+│ └── resumo.php        # cálculos e texto do resumo do mês
 │
 ├── tests/
-│ └── testes.php
+│ ├── testes.php
+│ ├── teste_categorizar.php
+│ ├── teste_resumo.php
+│ └── teste_integracao.php
 │
 ├── index.php
+├── resumo.php          # página do resumo do mês
 ├── login.php
 ├── logout.php
 ├── lint.bat
@@ -188,11 +214,22 @@ Categorização com IA ([`tests/teste_categorizar.php`](tests/teste_categorizar.
 - Descrição vazia vira "Outros" sem chamar a IA
 - O prompt leva a descrição e a lista de categorias
 
+Resumo do mês ([`tests/teste_resumo.php`](tests/teste_resumo.php)), também com respostas simuladas:
+
+- Soma do total, agrupamento por categoria e categoria vazia como "Outros"
+- Datas do mês, inclusive a virada de dezembro para janeiro, e texto inválido no filtro
+- O prompt leva os totais e a regra de não inventar números
+- Texto válido é devolvido; asteriscos são removidos; texto longo é cortado
+- Falha da API, resposta vazia ou erro na chamada não quebram a página
+- Mês sem despesas não chama a IA
+
 ### Executar testes
 
 C:\xampp\php\php.exe tests/testes.php
 
 C:\xampp\php\php.exe tests/teste_categorizar.php
+
+C:\xampp\php\php.exe tests/teste_resumo.php
 
 ---
 
@@ -211,6 +248,7 @@ Executa automaticamente:
 - Verificação de sintaxe (lint)
 - Testes automatizados
 - Testes da categorização com IA (respostas simuladas)
+- Testes do resumo do mês (respostas simuladas)
 - Teste de integração com a API de cotação
 
 Em:
@@ -249,6 +287,7 @@ Verifique:
 - Sem cadastro de usuários via interface
 - Sem separação por usuário
 - A categoria é sugerida pela IA e pode errar em descrições ambíguas
+- O texto do resumo é gerado por IA: o prompt proíbe inventar números, mas o código não confere cada frase. Por isso a tabela com os valores reais fica sempre ao lado do texto
 
 ---
 
@@ -256,8 +295,6 @@ Verifique:
 
 - password_hash
 - Cadastro de usuários
-- Filtro por data
-- Dashboard com gráficos
 - Permitir corrigir a categoria manualmente
 
 ---
